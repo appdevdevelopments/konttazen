@@ -10,12 +10,23 @@ import { User as UserService } from './entities/all';
 import { User as UserType } from './types';
 import { Avatar, AvatarFallback, AvatarImage } from './components/ui/avatar';
 import { UserCircle, Settings, CreditCard, Tag, Target, LogOut } from './components/icons';
+import { auth } from './integrations/firebase';
+import LoginPage from './components/LoginPage';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 
 const App: React.FC = () => {
   const [view, setView] = useState('dashboard');
   const [user, setUser] = useState<UserType | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return unsubscribe;
+  }, []);
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -26,8 +37,10 @@ const App: React.FC = () => {
         console.error("Failed to fetch user:", error);
       }
     };
-    fetchUser();
-  }, []);
+    if (currentUser) {
+      fetchUser();
+    }
+  }, [currentUser]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -40,6 +53,10 @@ const App: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
 
 
   interface NavButtonProps {
@@ -77,6 +94,10 @@ const App: React.FC = () => {
     setView(targetView);
     setIsDropdownOpen(false);
   };
+
+  if (!currentUser) {
+    return <LoginPage />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 font-sans text-gray-800 dark:text-gray-200">
@@ -145,7 +166,7 @@ const App: React.FC = () => {
                     Minhas metas
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                  <button className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" role="menuitem">
+                  <button onClick={handleLogout} className="w-full text-left flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20" role="menuitem">
                     <LogOut className="w-4 h-4" />
                     Sair da conta
                   </button>
