@@ -1,158 +1,240 @@
-
 import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../integrations/firebase";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { FaGoogle, FaEnvelope, FaLock } from 'react-icons/fa';
+import { FcGoogle } from 'react-icons/fc';
+import { FiUser, FiZap, FiMail, FiEye, FiEyeOff } from 'react-icons/fi';
 
 const LoginPage = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     setError("");
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error: any) {
-      setError(error.message);
+      setError("Falha no login. Verifique seu e-mail e senha.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSignup = async () => {
     setError("");
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("As senhas não correspondem.");
       return;
     }
+    if (!name) {
+        setError("Por favor, insira seu nome.");
+        return;
+    }
+    setLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
     } catch (error: any) {
-      setError(error.message);
+      setError("Falha no cadastro. Tente outro e-mail.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
+    setError("");
+    setLoading(true);
     try {
       await signInWithPopup(auth, provider);
     } catch (error: any) {
-      setError(error.message);
+      setError("Falha na autenticação com o Google.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const resetForm = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setError("");
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-indigo-100 to-purple-100">
-      <div className="w-full max-w-md p-8 space-y-6">
-        <div className="text-center">
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">Bem-vindo</h2>
-          <p className="mt-2 text-sm text-gray-600">
+    <div className="flex items-center justify-center min-h-screen bg-[#F8F9FE]">
+      <div className="w-full max-w-sm px-4">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-purple-600 rounded-lg shadow-md">
+            <FiZap className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800">
+            Bem-vindo
+          </h2>
+          <p className="mt-1 text-sm text-gray-500">
             Entre na sua conta ou crie uma nova
           </p>
         </div>
 
-        <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Entrar</TabsTrigger>
-            <TabsTrigger value="signup">Cadastrar</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login">
-            <div className="space-y-4">
-              <div className="relative">
-                <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="pl-10"
-                />
-              </div>
-              <div className="relative">
-                <FaLock className="absolute top-3 left-3 text-gray-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="********"
-                  className="pl-10"
-                />
-              </div>
-               <div className="text-right">
-                <a href="#" className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                  Esqueceu a senha?
-                </a>
-              </div>
-              <Button onClick={handleLogin} className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-                Entrar
-              </Button>
-            </div>
-          </TabsContent>
-          <TabsContent value="signup">
-            <div className="space-y-4">
-               <div className="relative">
-                <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
-                <Input
-                  id="email-signup"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="seu@email.com"
-                  className="pl-10"
-                />
-              </div>
-              <div className="relative">
-                <FaLock className="absolute top-3 left-3 text-gray-400" />
-                <Input
-                  id="password-signup"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="********"
-                  className="pl-10"
-                />
-              </div>
-              <div className="relative">
-                <FaLock className="absolute top-3 left-3 text-gray-400" />
-                <Input
-                  id="confirmPassword-signup"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="********"
-                  className="pl-10"
-                />
-              </div>
-              <Button onClick={handleSignup} className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
-                Cadastrar
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
-        
-        <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-indigo-100 text-gray-500">OU</span>
-            </div>
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <Tabs defaultValue="login" className="w-full" onValueChange={resetForm}>
+            <TabsList className="grid w-full grid-cols-2 p-1 bg-gray-100 rounded-lg">
+                <TabsTrigger value="login" className="py-1.5 text-sm font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Entrar</TabsTrigger>
+                <TabsTrigger value="signup" className="py-1.5 text-sm font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Cadastrar</TabsTrigger>
+            </TabsList>
+
+            {error && (
+                <div className="mt-4 p-3 text-sm text-red-700 bg-red-100 rounded-lg text-center" role="alert">
+                    {error}
+                </div>
+            )}
+
+            <TabsContent value="login" className="mt-6">
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                <div>
+                  <Label htmlFor="email-login" className="text-sm font-medium text-gray-600">Email</Label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="email-login"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seu@email.com"
+                      className="pl-3 pr-10"
+                      required
+                    />
+                    <FiMail className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="password-login" className="text-sm font-medium text-gray-600">Senha</Label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="password-login"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="pl-3 pr-10"
+                      required
+                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="text-right mt-2">
+                    <a href="#" className="text-xs font-medium text-purple-600 hover:text-purple-500">
+                        Esqueceu a senha?
+                    </a>
+                </div>
+                <Button type="submit" disabled={loading} className="w-full !mt-5 text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:opacity-90">
+                  {loading ? 'Entrando...' : 'Entrar'}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup" className="mt-6">
+              <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSignup(); }}>
+                <div>
+                  <Label htmlFor="name-signup" className="text-sm font-medium text-gray-600">Nome</Label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="name-signup"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Seu nome e sobrenome"
+                      className="pl-3 pr-10"
+                      required
+                    />
+                    <FiUser className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                  </div>
+                </div>
+                 <div>
+                  <Label htmlFor="email-signup" className="text-sm font-medium text-gray-600">Email</Label>
+                  <div className="relative mt-1">
+                    <Input
+                      id="email-signup"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seu@email.com"
+                      className="pl-3 pr-10"
+                      required
+                    />
+                    <FiMail className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                  </div>
+                </div>
+                <div>
+                  <Label htmlFor="password-signup" className="text-sm font-medium text-gray-600">Senha</Label>
+                   <div className="relative mt-1">
+                        <Input
+                          id="password-signup"
+                          type={showPassword ? "text" : "password"}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Crie uma senha"
+                          className="pl-3 pr-10"
+                          required
+                        />
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
+                            {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                        </button>
+                    </div>
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword-signup" className="text-sm font-medium text-gray-600">Confirmar Senha</Label>
+                  <div className="relative mt-1">
+                    <Input
+                        id="confirmPassword-signup"
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirme sua senha"
+                        className="pl-3 pr-10"
+                        required
+                    />
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
+                        {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                    </button>
+                  </div>
+                </div>
+                <Button type="submit" disabled={loading} className="w-full !mt-6 text-white bg-gradient-to-r from-purple-500 to-indigo-600 hover:opacity-90">
+                  {loading ? 'Criando...' : 'Criar Conta'}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
         </div>
 
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-[#F8F9FE] text-gray-400">OU</span>
+          </div>
+        </div>
 
-        <Button onClick={handleGoogleSignIn} className="w-full mt-4 bg-white text-gray-700 border border-gray-300">
-          <FaGoogle className="mr-2" /> Continuar com Google
+        <Button onClick={handleGoogleSignIn} disabled={loading} className="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
+          <FcGoogle className="w-4 h-4 mr-2" /> Continuar com Google
         </Button>
       </div>
     </div>
