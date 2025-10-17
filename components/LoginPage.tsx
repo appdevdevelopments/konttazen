@@ -78,11 +78,11 @@ const LoginPage = () => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F8F9FE]">
-      <div className="w-full max-w-sm px-4">
+    <div className="flex items-center justify-center min-h-screen pt-12 pb-12 bg-[#F8F9FE]">
+      <div className="w-full max-w-sm px-4 py-8">
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-14 h-14 mb-4 bg-purple-600 rounded-lg shadow-md">
-            <FiZap className="w-8 h-8 text-white" />
+            <div className="w-8 h-8 text-white"><FiZap /></div>
           </div>
           <h2 className="text-2xl font-bold text-gray-800">
             Bem-vindo
@@ -94,9 +94,9 @@ const LoginPage = () => {
 
         <div className="bg-white p-6 rounded-xl shadow-lg">
           <Tabs defaultValue="login" className="w-full" onValueChange={resetForm}>
-            <TabsList className="grid w-full grid-cols-2 p-1 bg-gray-100 rounded-lg">
-                <TabsTrigger value="login" className="py-1.5 text-sm font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Entrar</TabsTrigger>
-                <TabsTrigger value="signup" className="py-1.5 text-sm font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Cadastrar</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 gap-1 p-1 bg-gray-100 rounded-lg">
+                <TabsTrigger value="login" className="w-full py-2 text-base font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Entrar</TabsTrigger>
+                <TabsTrigger value="signup" className="w-full py-2 text-base font-medium text-gray-500 rounded-md data-[state=active]:bg-white data-[state=active]:text-purple-700 data-[state=active]:shadow-sm">Cadastrar</TabsTrigger>
             </TabsList>
 
             {error && (
@@ -119,7 +119,7 @@ const LoginPage = () => {
                       className="pl-3 pr-10"
                       required
                     />
-                    <FiMail className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                    <div className="absolute right-3 top-0 bottom-0 flex items-center justify-center text-gray-400"><FiMail size={20} /></div>
                   </div>
                 </div>
                 <div>
@@ -134,8 +134,8 @@ const LoginPage = () => {
                       className="pl-3 pr-10"
                       required
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                        {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-0 bottom-0 flex items-center">
+                        {showPassword ? <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEyeOff size={20} /></div> : <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEye size={20} /></div>}
                     </button>
                   </div>
                 </div>
@@ -164,7 +164,7 @@ const LoginPage = () => {
                       className="pl-3 pr-10"
                       required
                     />
-                    <FiUser className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                    <div className="absolute right-3 top-0 bottom-0 flex items-center justify-center text-gray-400"><FiUser size={20} /></div>
                   </div>
                 </div>
                  <div>
@@ -179,7 +179,7 @@ const LoginPage = () => {
                       className="pl-3 pr-10"
                       required
                     />
-                    <FiMail className="absolute w-5 h-5 text-gray-400 right-3 top-1/2 -translate-y-1/2" />
+                    <div className="absolute right-3 top-0 bottom-0 flex items-center justify-center text-gray-400"><FiMail size={20} /></div>
                   </div>
                 </div>
                 <div>
@@ -194,8 +194,8 @@ const LoginPage = () => {
                           className="pl-3 pr-10"
                           required
                         />
-                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                            {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                        <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-0 bottom-0 flex items-center">
+                            {showPassword ? <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEyeOff size={20} /></div> : <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEye size={20} /></div>}
                         </button>
                     </div>
                 </div>
@@ -211,8 +211,8 @@ const LoginPage = () => {
                         className="pl-3 pr-10"
                         required
                     />
-                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2">
-                        {showPassword ? <FiEyeOff className="w-5 h-5 text-gray-400" /> : <FiEye className="w-5 h-5 text-gray-400" />}
+                    <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-0 bottom-0 flex items-center">
+                        {showPassword ? <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEyeOff size={20} /></div> : <div className="w-5 h-5 text-gray-400 flex items-center justify-center"><FiEye size={20} /></div>}
                     </button>
                   </div>
                 </div>
@@ -234,7 +234,7 @@ const LoginPage = () => {
         </div>
 
         <Button onClick={handleGoogleSignIn} disabled={loading} className="w-full bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">
-          <FcGoogle className="w-4 h-4 mr-2" /> Continuar com Google
+          <div className="w-4 h-4 mr-2"><FcGoogle /></div> Continuar com Google
         </Button>
       </div>
     </div>

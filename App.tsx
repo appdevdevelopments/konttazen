@@ -69,7 +69,7 @@ const App: React.FC = () => {
   const NavButton: React.FC<NavButtonProps> = ({ currentView, targetView, setView: setViewProp, children }) => {
     const isActive = currentView === targetView;
     const classes = isActive
-      ? "bg-blue-600 text-white"
+      ? "bg-gray-300 text-gray-900"
       : "text-gray-600 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100";
     return (
       <button
